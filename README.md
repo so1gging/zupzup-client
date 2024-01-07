@@ -9,6 +9,7 @@
 
 ### 🐭 줍줍이 뭐에요?
 
+-----
 
 <div align="center">
     <img src="public/main-image.png" width="600">
