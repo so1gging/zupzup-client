@@ -41,6 +41,13 @@
 
 .seeAll:hover { opacity: 0.75; }
 
+.stateError {
+  text-align: center;
+  padding: 60px 0;
+  font-size: 15px;
+  color: #e74c3c;
+}
+
 @media (max-width: 768px) {
   .section { padding: 40px 20px; }
   .title { font-size: 22px; }

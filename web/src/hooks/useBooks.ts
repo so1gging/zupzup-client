@@ -1,32 +1,37 @@
-import { useMemo, useState } from 'react';
-import type { Book, BookCategory, BookSource } from '../types/book';
-import { MOCK_BOOKS } from '../constants/mockBooks';
+import { useState } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { fetchBooks } from '../lib/books.api';
+import type { BookSource } from '../types/book';
 
 interface UseBooksOptions {
   initialSource?: BookSource | 'all';
-  initialCategory?: BookCategory;
 }
 
-export function useBooks({ initialSource = 'all', initialCategory = 'all' }: UseBooksOptions = {}) {
+export function useBooks({ initialSource = 'all' }: UseBooksOptions = {}) {
+  const [page, setPage] = useState(1);
   const [activeSource, setActiveSource] = useState<BookSource | 'all'>(initialSource);
-  const [activeCategory, setActiveCategory] = useState<BookCategory>(initialCategory);
 
-  // 실제 서비스에서는 여기서 API 호출로 교체
-  const books: Book[] = MOCK_BOOKS;
+  const { data, isLoading, isFetching, error } = useQuery({
+    queryKey: ['books', { page, source: activeSource }],
+    queryFn: () => fetchBooks({ page, source: activeSource }),
+    placeholderData: keepPreviousData,
+  });
 
-  const filtered = useMemo(() => {
-    return books.filter((book) => {
-      const sourceMatch = activeSource === 'all' || book.source === activeSource;
-      const categoryMatch = activeCategory === 'all' || book.category === activeCategory;
-      return sourceMatch && categoryMatch;
-    });
-  }, [books, activeSource, activeCategory]);
+  function handleSourceChange(source: BookSource | 'all') {
+    setActiveSource(source);
+    setPage(1);
+  }
 
   return {
-    books: filtered,
+    books: data?.books ?? [],
+    total: data?.total ?? 0,
+    totalPages: data?.totalPages ?? 0,
+    page,
+    isLoading,
+    isFetching,
+    error: error ? (error as Error).message : null,
     activeSource,
-    activeCategory,
-    setActiveSource,
-    setActiveCategory,
+    setPage,
+    setActiveSource: handleSourceChange,
   };
 }

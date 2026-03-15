@@ -81,3 +81,12 @@
   color: var(--text-tertiary);
   font-weight: 500;
 }
+
+.sourceCount {
+  font-size: 10px;
+  background: var(--bg-sub);
+  color: var(--text-secondary);
+  padding: 1px 5px;
+  border-radius: 100px;
+  font-weight: 600;
+}
